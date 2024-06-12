@@ -588,7 +588,7 @@ GameObject:
   - component: {fileID: 382699947}
   m_Layer: 0
   m_Name: tokenControl
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -770,12 +770,25 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1086072753}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed3471aa9b65b564db6dafc504b14f6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   myBoard: {fileID: 1086072753}
+--- !u!114 &1086072757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1086072753}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 262f61918bda1834c95cb41bef945043, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RedToken: {fileID: 7470883388647772390, guid: 99cae0c7f23adf344b573dbd15d8150f, type: 3}
 --- !u!1 &1126339022
 GameObject:
   m_ObjectHideFlags: 0
@@ -907,6 +920,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6815475508901051490, guid: f280c73e2e18de84f99f3afc95a2832a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1086072755}
+    - targetCorrespondingSourceObject: {fileID: 6815475508901051490, guid: f280c73e2e18de84f99f3afc95a2832a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1086072757}
   m_SourcePrefab: {fileID: 100100000, guid: f280c73e2e18de84f99f3afc95a2832a, type: 3}
 --- !u!1 &2080346545
 GameObject:
