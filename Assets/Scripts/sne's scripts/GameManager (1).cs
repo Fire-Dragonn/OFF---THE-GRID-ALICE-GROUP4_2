@@ -37,11 +37,7 @@ public class GameManager : MonoBehaviour
         currentPlayer = Player.RED;
 
         tokenControl = GetComponent<TokenControl>();
-        if (tokenControl != null)
-        {
-            tokenControl.InitializePieces();
-        }
-
+       
 
         // UIControl.instance.UpdateTurnIndicator(currentPlayer);
     }
@@ -54,12 +50,12 @@ public class GameManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            Grid clickedGrid = new Grid() { x = (int)(mousePos.x + 0.5), y = (int)-(mousePos.y - 0.5) };
+            Grid clickedGrid = new Grid() { x = Mathf.RoundToInt(mousePos.x), y = Mathf.RoundToInt(mousePos.y) };
 
             switch (gameState)
             {
                 case Constants.CLICK:
-                    //HandleClickState(clickedGrid);
+                    HandleClickState(clickedGrid);
                     break;
 
                 case Constants.MOVE:
@@ -76,18 +72,9 @@ public class GameManager : MonoBehaviour
     {
         
         canMove = false;
-        if (clickedPiece == null)
-        {
-            Debug.LogError("Clicked piece is null!");
-            return;
-        }
-
-        if (clickedPiece == null)
-        {
-            Debug.LogError("Clicked piece is null!");
-            return;
-        }
-        CalculateMoves(currentPlayer);
+        //clickedPiece = tokenControl.GetPieceAtGrid(clickedGrid);
+       
+       // CalculateMoves(currentPlayer);
 
         if (playerMoves.Count == 0)
         {
@@ -96,8 +83,10 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (clickedPiece == null || clickedPiece.player != currentPlayer || clickedPiece.pieceNumber == -1)
+        if (clickedPiece == null || clickedPiece.Player != currentPlayer || clickedPiece.pieceNumber == -1)
+        {
             return;
+        }
 
         if (playerMoves.ContainsKey(clickedPiece))
         {
@@ -107,7 +96,7 @@ public class GameManager : MonoBehaviour
 
         if (!canMove) return;
 
-        tokenControl.HighlightGrid(clickedGrid);
+        //tokenControl.HighlightGrid(clickedGrid);
         gameState = Constants.MOVE;
     }
 
@@ -118,55 +107,55 @@ public class GameManager : MonoBehaviour
 
         foreach (var currentMove in moves)
         {
-            if (currentMove.end.x == clickedGrid.x && currentMove.end.y == clickedGrid.y)
-            {
-                tokenControl.MovePiece(clickedPiece, clickedGrid, currentMove.isCapture, currentMove.capturedPiece);
+            /*  if (currentMove.end.x == clickedGrid.x && currentMove.end.y == clickedGrid.y)
+              {
+                  tokenControl.MovePiece(clickedPiece, clickedGrid, currentMove.isCapture, currentMove.capturedPiece);
 
-                UpdateMove(currentMove);
-                if (currentMove.end.y == 0 && currentPlayer == Player.RED)
-                {
-                    tokenControl.RemovePiece(clickedPiece);
-                }
-                else if (currentMove.end.y == 5 && currentPlayer == Player.BLUE)
-                {
-                    tokenControl.RemovePiece(clickedPiece);
-                } 
-            }
+                  UpdateMove(currentMove);
+                  if (currentMove.end.y == 0 && currentPlayer == Player.RED)
+                  {
+                      tokenControl.RemovePiece(clickedPiece);
+                  }
+                  else if (currentMove.end.y == 5 && currentPlayer == Player.BLUE)
+                  {
+                      tokenControl.RemovePiece(clickedPiece);
+                  } 
+              }*/
+            gameState = Constants.CLICK;
+
+
+            currentPlayer = currentPlayer == Player.RED ? Player.BLUE : Player.RED;
+
+            UIControl.instance.UpdateTurnIndicator(currentPlayer);
+
+            Message(currentPlayer, Constants.CLICK);
+
+            tokenControl.ClearHighlight();
         }
-        gameState = Constants.CLICK;
-
-
-        currentPlayer = currentPlayer == Player.RED ? Player.BLUE : Player.RED;
-
-         UIControl.instance.UpdateTurnIndicator(currentPlayer);
-
-         Message(currentPlayer, Constants.CLICK);
-
-        tokenControl.ClearHighlight();
     }
     
   
 
 
-    private void CalculateMoves(Player player)
+   /* private void CalculateMoves(Player player)
     {
         playerMoves = new Dictionary<GamePiece, List<Moves>>();
 
         foreach (var piece in tokenControl.GetAllPieces())
         {
-            if (piece.player == player)
+            if (piece.Player == player)
             {
                 List<Moves> moves = new List<Moves>();
                 playerMoves[piece] = moves;
             }
         }
-    }
+    }*/
 
-    private void UpdateMove(Moves move)
+  /*  private void UpdateMove(Moves move)
     {
         // Logic for updating the board state after a move
-    }
-    private Dictionary<GamePiece, List<Moves>> playerMoves;
+    }*/
+   private Dictionary<GamePiece, List<Moves>> playerMoves;
     private bool isCapturedMove;
 
 

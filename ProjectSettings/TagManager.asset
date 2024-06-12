@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Tokens
-  - Grid tile
+  - Player2token
+  - Player1token
   layers:
   - Default
   - TransparentFX
@@ -43,6 +43,6 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: tokens
+  - name: player1tokens
     uniqueID: 3679389533
     locked: 0

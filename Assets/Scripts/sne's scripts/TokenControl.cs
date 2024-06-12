@@ -2,100 +2,120 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using System;
 using Debug = UnityEngine.Debug;
 
 public class TokenControl : MonoBehaviour
-{
-    [SerializeField]
-    private GameObject token;
-
+{ 
     [SerializeField]
     private GameObject highlightPrefab;
 
-    private Dictionary<GamePiece, GameObject> pieceDictionary;
+    private GameObject selectedToken;
+    private Vector3 originalPosition;
     private GameObject highlightInstance;
+    private Dictionary<Vector2, GameObject> boardPositions; // Track occupied positions on the board
+
 
     private void Awake()
     {
-        pieceDictionary = new Dictionary<GamePiece, GameObject>();
+        boardPositions = new Dictionary<Vector2, GameObject>();
+        PopulateBoardPositions();
+
+
     }
 
-    public void InitializePieces()
+    private void PopulateBoardPositions()
     {
-        int redPieceCount = 0;
-        int bluePieceCount = 0;
+        GameObject[] player1Tokens = GameObject.FindGameObjectsWithTag("Player1token");
+        GameObject[] player2Tokens = GameObject.FindGameObjectsWithTag("Player2token");
 
-        for (int i = 0; i < 6; i++)
+        foreach (var token in player1Tokens)
         {
-            for (int j = 0; j < 6; j++)
-            {
-                if ((i + j) % 2 != 0 && j < 2 && redPieceCount < 5)
-                {
-                    CreatePiece(i, j, Player.RED, ref redPieceCount);
-                }
-                else if ((i + j) % 2 != 0 && j > 3 && bluePieceCount < 5)
-                {
-                    CreatePiece(i, j, Player.BLUE, ref bluePieceCount);
-                }
-            }
+            Vector2 position = new Vector2(token.transform.position.x, token.transform.position.y);
+            boardPositions[position] = token;
+        }
+
+        foreach (var token in player2Tokens)
+        {
+            Vector2 position = new Vector2(token.transform.position.x, token.transform.position.y);
+            boardPositions[position] = token;
         }
     }
 
-    private void OnMouseEnter()
+    private void Update()
     {
-        // Get the grid position based on the mouse position
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Grid grid = new Grid() { x = (int)(mousePos.x + 0.5f), y = (int)-(mousePos.y - 0.5f) };
-
-        // Highlight the grid block
-        HighlightGrid(grid);
+        HandleMouseInput();
     }
 
-    private void CreatePiece(int x, int y, Player player, ref int pieceCount)
+    private void HandleMouseInput()
     {
-        GamePiece newPiece = new GamePiece(player, pieceCount++);
-        GameObject pieceObject = Instantiate(token);
-        pieceObject.transform.position = new Vector3(x, -y, -2f);
-        pieceObject.GetComponent<SpriteRenderer>().color = player == Player.RED ? Color.red : Color.blue;
-        pieceDictionary[newPiece] = pieceObject;
-
-        UnityEngine.Debug.Log($"Created {player} piece at ({x}, {y})");
-    }
-
-    public GamePiece GetPieceAtGrid(Grid grid)
-    {
-        foreach (var pair in pieceDictionary)
+        if (Input.GetMouseButtonDown(0))
         {
-            Vector3 position = pair.Value.transform.position;
-            Debug.Log($"Piece Position: ({position.x}, {position.y}), Grid Position: ({grid.x}, {grid.y})"); // Debug log for position comparison
-            if ((int)position.x == grid.x && (int)-position.y == grid.y)
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 mousePos2D = new Vector2(mousePos.x, mousePos.y);
+            RaycastHit2D hit = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+            if (hit.collider != null && (hit.collider.CompareTag("Player1token") || hit.collider.CompareTag("Player2token")))
             {
-                return pair.Key;
+                selectedToken = hit.collider.gameObject;
+                originalPosition = selectedToken.transform.position;
+                HighlightGrid(selectedToken.transform.position);
             }
         }
-        return null;
-    }
 
-    public void MovePiece(GamePiece piece, Grid newGrid, bool isCapture, GamePiece capturedPiece)
-    {
-        if (pieceDictionary.ContainsKey(piece))
+        if (Input.GetMouseButton(0) && selectedToken != null)
         {
-            pieceDictionary[piece].transform.position = new Vector3(newGrid.x, -newGrid.y, -2f);
-            if (isCapture)
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            selectedToken.transform.position = new Vector3(mousePos.x, mousePos.y, selectedToken.transform.position.z);
+        }
+
+        if (Input.GetMouseButtonUp(0) && selectedToken != null)
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 targetPosition = new Vector2(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y));
+
+            if (IsValidMove(targetPosition))
             {
-                pieceDictionary[capturedPiece].SetActive(false);
-                pieceDictionary.Remove(capturedPiece);
+                MoveToken(selectedToken, targetPosition);
             }
+            else
+            {
+                selectedToken.transform.position = originalPosition;
+            }
+
+            ClearHighlight();
+            selectedToken = null;
         }
     }
 
-    public void HighlightGrid(Grid grid)
+    private bool IsValidMove(Vector2 targetPosition)
+    {
+        if (boardPositions.ContainsKey(targetPosition))
+        {
+            return false; // Position is already occupied
+        }
+
+        // Additional logic to validate the move can be added here
+
+        return true;
+    }
+
+    private void MoveToken(GameObject token, Vector2 targetPosition)
+    {
+        Vector2 originalPos = new Vector2(originalPosition.x, originalPosition.y);
+        boardPositions.Remove(originalPos);
+        boardPositions[targetPosition] = token;
+        token.transform.position = new Vector3(targetPosition.x, targetPosition.y, token.transform.position.z);
+    }
+
+    public void HighlightGrid(Vector3 position)
     {
         if (highlightInstance != null)
         {
             Destroy(highlightInstance);
         }
-        highlightInstance = Instantiate(highlightPrefab, new Vector3(grid.x, -grid.y, -1f), Quaternion.identity);
+
+        highlightInstance = Instantiate(highlightPrefab, new Vector3(position.x, position.y, -1f), Quaternion.identity);
     }
 
     public void ClearHighlight()
@@ -105,19 +125,7 @@ public class TokenControl : MonoBehaviour
             Destroy(highlightInstance);
         }
     }
-    public void RemovePiece(GamePiece piece)
-    {
-        if (pieceDictionary.ContainsKey(piece))
-        {
-            Destroy(pieceDictionary[piece]);
-            pieceDictionary.Remove(piece);
-        }
-    }
 
-    public List<GamePiece> GetAllPieces()
-    {
-        return new List<GamePiece>(pieceDictionary.Keys);
-    }
 
 }
 

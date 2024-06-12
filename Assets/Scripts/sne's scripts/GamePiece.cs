@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class GamePiece
 {
-    public Player player { get; private set; }
+    public Player Player { get; private set; }
+    public int ID{ get; private set; }
     public int pieceNumber { get; private set; }
 
     public string pieceType;
     
-    public GamePiece(Player tempPlayer, int temp)
+    public GamePiece(Player player, int ID)
     {
-        player = tempPlayer;
-        pieceNumber = temp;
-        pieceType = Constants.NORMAL_PIECE;
+        Player = player;
+      //  ID = id;
     }
 
 }
