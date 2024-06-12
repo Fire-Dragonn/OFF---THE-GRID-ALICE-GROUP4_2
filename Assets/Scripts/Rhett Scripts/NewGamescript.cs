@@ -10,9 +10,9 @@ public class NewGamescript : MonoBehaviour
     private GameObject[] playerRed = new GameObject[5];
     private GameObject[] playerBlue = new GameObject[5];
 
-    private string currentplayer = "Red";
+    //private string currentplayer = "Red";
 
-    private bool GameOver = false;
+   // private bool GameOver = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,8 +38,8 @@ public class NewGamescript : MonoBehaviour
         GameObject obj = Instantiate(RedToken, new Vector3(0,0,1), Quaternion.identity);
         TokenScript cm = obj.GetComponent<TokenScript>();
         cm.name = name;
-        cm.SetxBoard(x);
-        cm.SetyBoard(y);
+       // cm.SetxBoard(x);
+       // cm.SetyBoard(y);
         cm.Activate();
         return obj;
     }
@@ -48,7 +48,7 @@ public class NewGamescript : MonoBehaviour
     {
         TokenScript cm = obj.GetComponent<TokenScript>();
 
-        positions[cm.GetxBoard(), cm.GetyBoard()] = obj;
+      //  positions[cm.GetxBoard(), cm.GetyBoard()] = obj;
     }
    
 }
