@@ -39,6 +39,22 @@ public class TokenScript : MonoBehaviour
         x += -2.3f;
         y += -2.3f;
 
-        this.transform.position = new Vector3(x, y, -1);
+        this.transform.position = new Vector3(x, y, 1);
     }
+
+    public int GetxBoard()
+    {
+        return xBoard;
+    }
+
+    public int GetyBoard()
+    {
+        return yBoard;
+    }
+
+    public void SetxBoard(int x)
+    { xBoard = x; }
+
+    public void SetyBoard(int y) 
+    { yBoard = y; }
 }
