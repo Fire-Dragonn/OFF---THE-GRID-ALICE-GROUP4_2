@@ -22,11 +22,11 @@ public class NewGamescript : MonoBehaviour
         //Instantiate(Token, new Vector3 (0,0,-1), Quaternion.identity);
         playerRed = new GameObject[]
         {
-            Create("RedToken", 1, -5,-1),Create("RedToken2", 3, -5,-1),Create("RedToken3", 3, -3,-1),Create("Redtoken4",5, -3,-1),Create("Redtoken5",5, -1,-1) 
+            Create("RedToken", 1, -5,1),Create("RedToken2", 3, -5,1),Create("RedToken3", 3, -3,1),Create("Redtoken4",5, -3,1),Create("Redtoken5",5, -1,1) 
         };
         playerBlue = new GameObject[]
         {
-            Create("BlueToken", -1, 5 ,-1),Create("Bluetoken2", -3, 5,-1),Create("Bluetoken3", -3, 3, -1),Create("Bluetoken4", -5, 3,-1),Create("BLuetoken5", -5, 1,-1)
+            Create("BlueToken", -1, 5 ,1),Create("Bluetoken2", -3, 5,1),Create("Bluetoken3", -3, 3, 1),Create("Bluetoken4", -5, 3,1),Create("BLuetoken5", -5, 1,1)
         };
 
         for (int i = 0; 1 < playerRed.Length; i++)
@@ -38,7 +38,7 @@ public class NewGamescript : MonoBehaviour
 
     public GameObject Create(string name, int x, int y, int z)
     {
-        GameObject obj = Instantiate(Token, new Vector3(0,0,-1), Quaternion.identity);
+        GameObject obj = Instantiate(Token, new Vector3(0,0,1), Quaternion.identity);
         TokenScript cm = obj.GetComponent<TokenScript>();
         cm.name = name;
         cm.SetxBoard(x);

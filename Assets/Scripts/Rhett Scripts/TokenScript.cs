@@ -51,7 +51,7 @@ public class TokenScript : MonoBehaviour
         float xPos = xBoard * 1f;//0.66f + -2.3f;
         float yPos = yBoard * 1f;//0.66f + -2.3f;
 
-        this.transform.position = new Vector3(xPos, yPos, -1);
+        this.transform.position = new Vector3(xPos, yPos, 1);
     }
    /* public void SetPlayer(string player)
     {
