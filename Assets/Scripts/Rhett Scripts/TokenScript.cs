@@ -107,7 +107,8 @@ public class TokenScript : MonoBehaviour
         }
 
     }
-
+    
+    //Supposed to be the movemnt doesnt work
     public void LineMovePlate(int xin, int yin)
     {
         NewGamescript sc = controller.GetComponent<NewGamescript>();
