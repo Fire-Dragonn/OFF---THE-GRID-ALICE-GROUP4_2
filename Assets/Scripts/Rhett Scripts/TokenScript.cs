@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
 
 public class TokenScript : MonoBehaviour
 {
     public GameObject controller;
     public GameObject moveplate;
+
+    private Vector3 screenPoint;
+    private Vector3 offset;
+    private bool isDragging = false;
 
     private int xBoard = -1;
     private int yBoard = -1;
@@ -19,25 +25,15 @@ public class TokenScript : MonoBehaviour
     public void Activate()
     {
         controller = GameObject.FindGameObjectWithTag("GameController");
-        /*if (controller == null)
-        {
-            Debug.LogError("GameController not found!");
-            return;
-        }
-        // Ensure coordinates are set
-        if (xBoard == -1 || yBoard == -1)
-        {
-            Debug.LogError("Coordinates not set for token!");
-            return;
-        }*/
-
+        
         SetCoords();
 
-        switch (this.name)
-        {
-            case "redToken": this.GetComponent<SpriteRenderer>().sprite = redToken; player = "Red"; break;
 
-            case "BlueToken": this.GetComponent<SpriteRenderer>().sprite = BlueToken; player = "Blue"; break;
+        switch (this.tag)
+        {
+            case "Player1token": this.GetComponent<SpriteRenderer>().sprite = redToken; player = "Red"; break;
+
+            case "Player2token": this.GetComponent<SpriteRenderer>().sprite = BlueToken; player = "Blue"; break;
 
             case "NeutralToken": this.GetComponent<SpriteRenderer>().sprite = NeutralToken; break;
         }
@@ -53,17 +49,10 @@ public class TokenScript : MonoBehaviour
 
         this.transform.position = new Vector3(xPos, yPos, 1);
     }
-   /* public void SetPlayer(string player)
-    {
-        this.player = player;
-    }
-
-    public string GetPlayer()
-    {
-        return player;
-    }*/
+   
    public int GetxBoard()
     { return xBoard; }
+
    public int GetyBoard() 
     { return yBoard; }
 
@@ -75,82 +64,82 @@ public class TokenScript : MonoBehaviour
     {
         yBoard = y;
     }
+    void OnMouseDown()
+    {
+        //if (controller.GetComponent<NewGamescript>().GetCurrentPlayer() == player && !controller.GetComponent<NewGamescript>().IsGameOver())
+        {
+            screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
+            offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
+            isDragging = true;
+        }
+    }
+    void OnMouseDrag()
+    {
+        if (isDragging)
+        {
+            Vector3 cursorPoint = new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z);
+            Vector3 cursorPosition = Camera.main.ScreenToWorldPoint(cursorPoint) + offset;
+            transform.position = cursorPosition;
+        }
+    }
+
 
     private void OnMouseUp()
     {
-        Destroymoveplates();
-
-        IntantiateMovePlates();
-    }
-
-    public void Destroymoveplates()
-    {
-        GameObject[] moveplates = GameObject.FindGameObjectsWithTag("MovePlate");
-        for (int i = 0; 1 < moveplates.Length; i++)
+        if (isDragging)
         {
-            Destroy(moveplates[i]);
-        }
-    }
+            isDragging = false;
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            int targetX = Mathf.RoundToInt(mousePos.x);
+            int targetY = Mathf.RoundToInt(mousePos.y);
 
-    public void IntantiateMovePlates()
-    {
-        switch (this.name) 
-        {
-            case "RedToken":
-            case "BlueToken":
-            case "NeutralToken":
-                LineMovePlate(1,0);
-                LineMovePlate(0, 1);
-                LineMovePlate(-1, 0);
-                LineMovePlate(0, -1);
-                break;
-        }
+            NewGamescript sc = controller.GetComponent<NewGamescript>();
 
-    }
-    
-    //Supposed to be the movemnt doesnt work
-    public void LineMovePlate(int xin, int yin)
-    {
-        NewGamescript sc = controller.GetComponent<NewGamescript>();
-
-        if (sc.positiononboard(xin, yin))
-        {
-            if (sc.GetPosition(xin,yin) == null)
+            // Check if the target position is within the board bounds and empty
+            if (sc != null)
             {
-                MovePlateSpawn(xin, yin);
+                // Check if the target position is within bounds and empty
+                if (sc.positiononboard(targetX, targetY) && sc.GetPosition(targetX, targetY) == null)
+                {
+                    // Calculate the center position of the target grid block
+                    float targetCenterX = targetX;
+                    float targetCenterY = targetY;
+
+                    // Update token's board coordinates
+                    // NewGamescript.setpositionempty(xBoard, yBoard);
+                    xBoard = targetX;
+                    yBoard = targetY;
+                    SetCoords();
+
+                    // Snap the token to the center of the target grid block
+                    transform.position = new Vector3(targetCenterX, targetCenterY, transform.position.z);
+
+                    // Set the token at the new position on the board
+                    //sc.SetPosition(gameObject);
+
+                }
+                else
+                {
+                    // Handle invalid move (e.g., snap back to original position)
+                    SnapToCenter(xBoard, yBoard);
+                }
             }
-
-            //if (sc.GetPosition(xin +1,yin) && sc.GetPosition(xin+1,yin) !=null && sc.GetPosition(xin+1,y).GetComponent<TokenScript>().player != player)
+            else
+            {
+                Debug.LogError("NewGameScript component not found on the controller object.");
+            }
         }
-
-        /*int x = xBoard + xin;
-        int y = yBoard + yin;
-
-        while (sc.positiononboard(x, y) && sc.GetPosition(x,y) == null)
-        {
-            MovePlateSpawn(x, y);
-            x += xin;
-            y += yin;
-        }*/
-
-        /*if (sc.positiononboard(x,y) && sc.GetPosition(x,y).GetComponent<TokenScript>().player != player)
-        {
-
-        }*/ 
     }
-
-    public void MovePlateSpawn(int matrixX, int matrixY)
+    void SnapToCenter(int targetX, int targetY)
     {
-        float x = matrixX;
-        float y = matrixY;
+        float xPos = targetX * 1f;
+        float yPos = targetY * 1f;
 
-        x *= 1f;
-        y *= 1f;
-
-        GameObject mp = Instantiate(moveplate, new Vector3(x,y,-3), Quaternion.identity);
-
-        MOveplate mpScript = mp.GetComponent<MOveplate>();
-        mpScript.SetReference(gameObject);
-        mpScript.setCoordsmp(matrixX, matrixY);
+        transform.position = new Vector3(xPos, yPos, transform.position.z);
     }
+
 }
+
+    
+
+    

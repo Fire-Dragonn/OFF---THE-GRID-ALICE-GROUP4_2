@@ -8,46 +8,55 @@ public class MOveplate : MonoBehaviour
 
     GameObject reference = null;
 
-    int matriX;
-    int matriY;
+    int matrixX;
+    int matrixY;
 
     //True = movemnt
     public bool movement = true;
 
-    public void Start()
+    public void SetReference(GameObject obj)
     {
+        reference = obj;
+    }
 
+    public void SetCoords(int x, int y)
+    {
+        matrixX = x;
+        matrixY = y;
     }
 
     public void OnMouseUp()
     {
         controller = GameObject.FindGameObjectWithTag("GameController");
+        TokenScript ts = reference.GetComponent<TokenScript>();
+        NewGamescript sc = ts.controller.GetComponent<NewGamescript>();
 
-        GameObject tp = controller.GetComponent<NewGamescript>().GetPosition(matriX, matriY);
+        sc.setpositionempty(ts.GetxBoard(), ts.GetyBoard());
 
-        Destroy(tp);
+        ts.SetxBoard(matrixX);
+        ts.SetyBoard(matrixY);
+        ts.SetCoords();
 
-        controller.GetComponent<NewGamescript>().setpositionempty(reference.GetComponent<TokenScript>().GetxBoard(),
-            reference.GetComponent<TokenScript>().GetyBoard());
+        //sc.SetPosition(reference);
 
-        reference.GetComponent<TokenScript>().SetxBoard(matriX);
-        reference.GetComponent<TokenScript>().SetyBoard(matriY);
-        reference.GetComponent<TokenScript>().SetCoords();
+      //  ts.Destroymoveplates();
 
-        controller.GetComponent<NewGamescript>().SetPosition(reference);
+       
+    }
 
-        reference.GetComponent<TokenScript>().Destroymoveplates();
+    public void DestroyMovePlates()
+    {
+        GameObject[] movePlates = GameObject.FindGameObjectsWithTag("MovePlate");
+        for (int i = 0; i < movePlates.Length; i++)
+        {
+            Destroy(movePlates[i]);
+        }
     }
 
     public void setCoordsmp(int x, int y)
     {
-        matriX = x;
-        matriY = y;
-    }
-
-    public void SetReference(GameObject obj)
-    {
-        reference = obj;
+        matrixX = x;
+        matrixY = y;
     }
 
     public GameObject Getreference()
