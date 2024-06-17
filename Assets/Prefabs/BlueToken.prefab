@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4077064211385168664}
   - component: {fileID: 909969636543063006}
   - component: {fileID: 3917661372915233864}
+  - component: {fileID: 2502331491054994131}
+  - component: {fileID: -1220899557248106565}
   m_Layer: 0
   m_Name: BlueToken
   m_TagString: Player2token
@@ -135,6 +137,48 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   controller: {fileID: 0}
   moveplate: {fileID: 0}
+  counter: {fileID: 0}
   redToken: {fileID: 21300000, guid: a9b4c59c8a929404da0d60c55755481c, type: 3}
   BlueToken: {fileID: 21300000, guid: 4148582095e0120479540d6d502de2f9, type: 3}
   NeutralToken: {fileID: 21300000, guid: 8306c1d96107cc84885ab38033314bd6, type: 3}
+--- !u!50 &2502331491054994131
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7470883388647772390}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &-1220899557248106565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7470883388647772390}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3587bf7efbe898f438c6f08623fc9c26, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: 1
+  isSpecialToken: 0

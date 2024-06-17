@@ -9,6 +9,8 @@ using UnityEngine.SceneManagement;
 public class NewGamescript : MonoBehaviour
 {
     public static NewGamescript Instance { get; private set; }
+    public redgate redG;
+    public BLuegate blueG;
 
     public GameObject redTokenPrefab;
     public GameObject blueTokenPrefab;

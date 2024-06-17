@@ -26,7 +26,7 @@ public class Playerturn : MonoBehaviour
             Player1turn = true;
             Player2turn = false;
         }
-        else if (Input.GetKeyDown(KeyCode.Alpha0))
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             Player1turn = false;
             Player2turn = true;
