@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NeutralTokenspawner : MonoBehaviour
 {
     public GameObject NeutralTokens;
+
+    
 
     private GameObject[] playerneutral = new GameObject[6];
     // Start is called before the first frame update
@@ -31,9 +34,9 @@ public class NeutralTokenspawner : MonoBehaviour
         cm.Activate();
         return obj;
     }
-    // Update is called once per frame
-    void Update()
+
+   /* private void OnMouseDown()
     {
-        
-    }
+        counter.PlayerTurnCounter++;
+    }*/
 }
