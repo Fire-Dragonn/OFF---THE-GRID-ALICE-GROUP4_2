@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class NewGamescript : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class NewGamescript : MonoBehaviour
 
     public GameObject winPanel;
     public GameObject losePanel;
+
+    public GameObject quitButton;
 
     public int redScore = 0;
     public int blueScore = 0;
@@ -37,11 +40,18 @@ public class NewGamescript : MonoBehaviour
     {
         playerTurnManager = GetComponent<Playerturn>();
 
-     /*   if (playerTurnManager == null)
+       if (playerTurnManager == null)
         {
             Debug.LogError("Playerturn component not found on the GameController object.");
             return;
-        }*/
+        }
+
+        // Ensure quitButton is assigned in the Unity Editor
+        if (quitButton != null)
+        {
+            // Add listener for the quit button click event
+            quitButton.GetComponent<Button>().onClick.AddListener(QuitGame);
+        }
 
         playerRed = new GameObject[]
         {
@@ -136,14 +146,22 @@ public class NewGamescript : MonoBehaviour
 
     public void SwitchPlayer()
     {
-        Playerturn turnManager = GetComponent<Playerturn>();
-        turnManager.SwitchPlayer();
+        if (playerTurnManager != null)
+        {
+            playerTurnManager.SwitchPlayer();
+        }
+        else
+        {
+            Debug.LogError("Playerturn component reference is missing.");
+        }
     }
 
     public void EndGame()
     {
         gameOver = true;
     }
+
+
 
     public void CheckForPointsAndWin(string player, int x, int y)
     {
@@ -152,7 +170,7 @@ public class NewGamescript : MonoBehaviour
 
         if (reachedGate)
         {
-            if (player == "Red")
+            if (player == "Red" && y == 5)
             {
                 redScore++;
                 if (redScore == 5)
@@ -160,7 +178,7 @@ public class NewGamescript : MonoBehaviour
                     DisplayWinPanel(player);
                 }
             }
-            else
+            else if (player == "Blue" && y == -5)
             {
                 blueScore++;
                 if (blueScore == 5)
@@ -185,12 +203,24 @@ public class NewGamescript : MonoBehaviour
         if (winner == "Red")
         {
             // Set win and lose texts appropriately
+            winPanel.SetActive(true);
         }
         else
         {
             // Set win and lose texts appropriately
+            if(winner == "Blue")
+            {
+                winPanel.SetActive(false);
+                losePanel.SetActive(true);
+            }
         }
     }
+    public void QuitGame()
+    {
+        // Load the main menu scene
+        SceneManager.LoadScene("MainMenu");
+    }
+
     internal string GetCurrentPlayer()
     {
         throw new NotImplementedException();

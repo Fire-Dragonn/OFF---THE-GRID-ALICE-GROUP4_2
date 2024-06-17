@@ -69,7 +69,7 @@ public class TokenScript : MonoBehaviour
         float xPos = xBoard * 1f;//0.66f + -2.3f;
         float yPos = yBoard * 1f;//0.66f + -2.3f;
 
-        this.transform.position = new Vector3(xPos, yPos, 1);
+        this.transform.position = new Vector3(xPos, yPos, transform.position.z);
     }
     public string GetPlayer() { return player; }
 
@@ -133,7 +133,6 @@ public class TokenScript : MonoBehaviour
                     float targetCenterX = targetX;
                     float targetCenterY = targetY;
 
-                    // Update token's board coordinates
                     // NewGamescript.setpositionempty(xBoard, yBoard);
                     sc.setpositionempty(xBoard, yBoard);
                     xBoard = targetX;
@@ -144,8 +143,9 @@ public class TokenScript : MonoBehaviour
                     transform.position = new Vector3(targetCenterX, targetCenterY, transform.position.z);
 
                     // Set the token at the new position on the board
-                    sc.SetPosition(gameObject,xBoard,yBoard);
-                    sc.CheckForPointsAndWin(player, xBoard, yBoard);
+                    sc.SetPosition(this.gameObject,targetX,targetY);
+
+                    sc.CheckForPointsAndWin(player, targetX,targetY);
 
                     sc.SwitchPlayer();
                 }
