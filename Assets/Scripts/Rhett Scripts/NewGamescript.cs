@@ -9,7 +9,7 @@ public class NewGamescript : MonoBehaviour
 /*    public GameObject blueTokenPrefab;*/
     //public GameObject NeutralToken;
 
-    private int PlayerTurnCounter = 0;
+    
     
     
 
