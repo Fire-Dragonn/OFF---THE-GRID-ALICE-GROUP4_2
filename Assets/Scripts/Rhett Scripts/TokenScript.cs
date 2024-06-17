@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static UnityEditor.Experimental.AssetDatabaseExperimental.AssetDatabaseCounters;
 using static UnityEngine.GraphicsBuffer;
 
 public class TokenScript : MonoBehaviour
@@ -17,6 +18,8 @@ public class TokenScript : MonoBehaviour
     private int yBoard = -1;
 
     private string player;
+
+    public Playerturn counter;
 
     public Sprite redToken;
     public Sprite BlueToken;
@@ -37,6 +40,9 @@ public class TokenScript : MonoBehaviour
 
             case "NeutralToken": this.GetComponent<SpriteRenderer>().sprite = NeutralToken; break;
         }
+
+
+        
     }
 
     public void SetCoords()
@@ -72,6 +78,7 @@ public class TokenScript : MonoBehaviour
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
             isDragging = true;
         }
+        
     }
     void OnMouseDrag()
     {
@@ -86,6 +93,7 @@ public class TokenScript : MonoBehaviour
 
     private void OnMouseUp()
     {
+
         if (isDragging)
         {
             isDragging = false;
@@ -137,7 +145,6 @@ public class TokenScript : MonoBehaviour
 
         transform.position = new Vector3(xPos, yPos, transform.position.z);
     }
-
 }
 
     

@@ -16,14 +16,19 @@ public class Playerturn : MonoBehaviour
 
     public int PlayerTurnCounter = 0;
 
+    private void Start()
+    {
+        player1.SetActive(true);
+    }
     private void Update()
     {
-        if (Player1turn)
+        //Debug.Log(PlayerTurnCounter);
+        if (PlayerTurnCounter/2 > 0)
         {
             player1.SetActive(true);
             player2.SetActive(false);
         }
-        else if (Player2turn)
+        else
         {
             player2.SetActive(true);
             player1.SetActive(false);
