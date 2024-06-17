@@ -6,15 +6,16 @@ using UnityEngine;
 public class NewGamescript : MonoBehaviour
 {
     public GameObject redTokenPrefab;
-    public GameObject blueTokenPrefab;
+/*    public GameObject blueTokenPrefab;*/
     //public GameObject NeutralToken;
-    
+
+    private int PlayerTurnCounter = 0;
     
     
 
     private GameObject[,] positions = new GameObject[6, 6];
     private GameObject[] playerRed = new GameObject[5];
-    private GameObject[] playerBlue = new GameObject[5];
+    /*private GameObject[] playerBlue = new GameObject[5];*/
 
     private string currentplayer = "Red";
 
@@ -31,7 +32,7 @@ public class NewGamescript : MonoBehaviour
             Create(redTokenPrefab, 5, -1)
         };
 
-        playerBlue = new GameObject[]
+        /*playerBlue = new GameObject[]
         {
             Create(blueTokenPrefab, -1, 5),
             Create(blueTokenPrefab, -3, 5),
@@ -39,7 +40,7 @@ public class NewGamescript : MonoBehaviour
             Create(blueTokenPrefab, -5, 3),
             Create(blueTokenPrefab, -5, 1)
         };
-
+*/
          for (int i = 0; i < playerRed.Length; i++)
          {
            // SetPosition(playerRed[i]);
@@ -49,7 +50,7 @@ public class NewGamescript : MonoBehaviour
 
     public GameObject Create(GameObject prefab, int x, int y)
     {
-        GameObject obj = Instantiate(prefab, new Vector3(x,y,-1), Quaternion.identity);
+        GameObject obj = Instantiate(prefab, new Vector3(x,y,1), Quaternion.identity);
         TokenScript cm = obj.GetComponent<TokenScript>();
         cm.name = name;
         cm.SetxBoard(x);
