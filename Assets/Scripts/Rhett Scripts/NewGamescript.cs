@@ -2,20 +2,32 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class NewGamescript : MonoBehaviour
 {
     public GameObject redTokenPrefab;
-/*    public GameObject blueTokenPrefab;*/
-    //public GameObject NeutralToken;
+    public GameObject blueTokenPrefab;
 
-    
-    
-    
+    public GameObject winPanel;
+    public GameObject losePanel;
 
-    private GameObject[,] positions = new GameObject[6, 6];
+    public int redScore = 0;
+    public int blueScore = 0;
+
+    public TMP_Text redScoreText;
+    public TMP_Text blueScoreText;
+
+    private const int BoardSize = 11; // from -5 to 5 inclusive, we need 11 slots
+    private const int Offset = 5; // to transform -5..5 to 0..10
+
+    private GameObject[,] positions = new GameObject[BoardSize, BoardSize];
+
+    private Playerturn playerTurnManager;
+
     private GameObject[] playerRed = new GameObject[5];
-    /*private GameObject[] playerBlue = new GameObject[5];*/
+    private GameObject[] playerBlue = new GameObject[5];
 
     private string currentplayer = "Red";
 
@@ -23,6 +35,14 @@ public class NewGamescript : MonoBehaviour
     
     void Start()
     {
+        playerTurnManager = GetComponent<Playerturn>();
+
+     /*   if (playerTurnManager == null)
+        {
+            Debug.LogError("Playerturn component not found on the GameController object.");
+            return;
+        }*/
+
         playerRed = new GameObject[]
         {
             Create(redTokenPrefab, 1, -5),
@@ -32,7 +52,7 @@ public class NewGamescript : MonoBehaviour
             Create(redTokenPrefab, 5, -1)
         };
 
-        /*playerBlue = new GameObject[]
+        playerBlue = new GameObject[]
         {
             Create(blueTokenPrefab, -1, 5),
             Create(blueTokenPrefab, -3, 5),
@@ -40,12 +60,13 @@ public class NewGamescript : MonoBehaviour
             Create(blueTokenPrefab, -5, 3),
             Create(blueTokenPrefab, -5, 1)
         };
-*/
+
          for (int i = 0; i < playerRed.Length; i++)
          {
-           // SetPosition(playerRed[i]);
-            // SetPosition(playerBlue[i]);
-         }
+            SetPosition(playerRed[i], playerRed[i].GetComponent<TokenScript>().GetxBoard(), playerRed[i].GetComponent<TokenScript>().GetyBoard());
+            SetPosition(playerBlue[i], playerBlue[i].GetComponent<TokenScript>().GetxBoard(), playerBlue[i].GetComponent<TokenScript>().GetyBoard());
+        }
+        UpdateScoreText();
     }
 
     public GameObject Create(GameObject prefab, int x, int y)
@@ -61,48 +82,115 @@ public class NewGamescript : MonoBehaviour
 
     public void SetPosition(GameObject obj, int x, int y)
     {
-        TokenScript cm = obj.GetComponent<TokenScript>();
-        cm.SetxBoard(x);
-        cm.SetyBoard(y);
-
-        positions[x, y] = obj;
-
-        // positions[cm.GetxBoard(), cm.GetyBoard()] = obj;
+        if (positiononboard(x, y))
+        {
+            int arrayX = TransformCoordinate(x);
+            int arrayY = TransformCoordinate(y);
+            positions[arrayX, arrayY] = obj;
+        }
+        else
+        {
+            Debug.LogError($"Attempted to set a token at invalid position ({x}, {y})");
+        }
     }
    
     public void setpositionempty(int x, int y)
     {
-        positions[x, y] = null;
+        if (positiononboard(x, y))
+        {
+            int arrayX = TransformCoordinate(x);
+            int arrayY = TransformCoordinate(y);
+            positions[arrayX, arrayY] = null;
+        }
+        else
+        {
+            Debug.LogError($"Attempted to empty an invalid position ({x}, {y})");
+        }
     }
 
     public GameObject GetPosition(int x, int y)
     {
         if (positiononboard(x, y))
         {
-            return positions[x, y];
+            int arrayX = TransformCoordinate(x);
+            int arrayY = TransformCoordinate(y);
+            return positions[arrayX, arrayY];
         }
         return null;
     }
 
     public bool positiononboard(int x, int y)
     {
-        if (x < 0 || y < 0 || x >= positions.GetLength(0) || y >= positions.GetLength(1)) return false;
-        return true;
+        return x >= -Offset && y >= -Offset && x <= Offset && y <= Offset;
     }
 
-    
+    private int TransformCoordinate(int coordinate)
+    {
+        return coordinate + Offset;
+    }
+
     public bool IsGameOver()
     {
         return gameOver;
     }
-   
 
+    public void SwitchPlayer()
+    {
+        Playerturn turnManager = GetComponent<Playerturn>();
+        turnManager.SwitchPlayer();
+    }
 
     public void EndGame()
     {
         gameOver = true;
     }
 
+    public void CheckForPointsAndWin(string player, int x, int y)
+    {
+        // Assuming the gates are at (5,5) and (-5,-5)
+        bool reachedGate = (player == "Red" && x == 5 && y == 5) || (player == "Blue" && x == -5 && y == -5);
+
+        if (reachedGate)
+        {
+            if (player == "Red")
+            {
+                redScore++;
+                if (redScore == 5)
+                {
+                    DisplayWinPanel(player);
+                }
+            }
+            else
+            {
+                blueScore++;
+                if (blueScore == 5)
+                {
+                    DisplayWinPanel(player);
+                }
+                UpdateScoreText();
+            }
+        }
+    }
+
+    private void UpdateScoreText()
+    {
+        redScoreText.text = $"Red Score: {redScore}";
+        blueScoreText.text = $"Blue Score: {blueScore}";
+    }
+
+    private void DisplayWinPanel(string winner)
+    {
+        gameOver = true;
+        winPanel.SetActive(true);
+        if (winner == "Red")
+        {
+            // Set win and lose texts appropriately
+        }
+        else
+        {
+            // Set win and lose texts appropriately
+        }
+    }
     internal string GetCurrentPlayer()
     {
         throw new NotImplementedException();

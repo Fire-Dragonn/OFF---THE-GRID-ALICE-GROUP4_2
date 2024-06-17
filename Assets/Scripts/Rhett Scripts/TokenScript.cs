@@ -22,10 +22,26 @@ public class TokenScript : MonoBehaviour
     public Sprite BlueToken;
     public Sprite NeutralToken;
 
+    private Playerturn playerTurnManager;
+
+
     public void Activate()
     {
         controller = GameObject.FindGameObjectWithTag("GameController");
-        
+        if (controller == null)
+        {
+            Debug.LogError("GameController not found");
+            return;
+        }
+
+        playerTurnManager = controller.GetComponent<Playerturn>();
+
+        if (playerTurnManager == null)
+        {
+            Debug.LogError("Playerturn component not found on the GameController object.");
+            return;
+        }
+
         SetCoords();
 
 
@@ -49,8 +65,9 @@ public class TokenScript : MonoBehaviour
 
         this.transform.position = new Vector3(xPos, yPos, 1);
     }
-   
-   public int GetxBoard()
+    public string GetPlayer() { return player; }
+
+    public int GetxBoard()
     { return xBoard; }
 
    public int GetyBoard() 
@@ -66,7 +83,10 @@ public class TokenScript : MonoBehaviour
     }
     void OnMouseDown()
     {
-        //if (controller.GetComponent<NewGamescript>().GetCurrentPlayer() == player && !controller.GetComponent<NewGamescript>().IsGameOver())
+        NewGamescript sc = controller.GetComponent<NewGamescript>();
+        Playerturn turnManager = controller.GetComponent<Playerturn>();
+
+        if (playerTurnManager != null && playerTurnManager.GetCurrentPlayer() == player && !controller.GetComponent<NewGamescript>().IsGameOver())
         {
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
@@ -107,6 +127,7 @@ public class TokenScript : MonoBehaviour
 
                     // Update token's board coordinates
                     // NewGamescript.setpositionempty(xBoard, yBoard);
+                    sc.setpositionempty(xBoard, yBoard);
                     xBoard = targetX;
                     yBoard = targetY;
                     SetCoords();
@@ -115,8 +136,10 @@ public class TokenScript : MonoBehaviour
                     transform.position = new Vector3(targetCenterX, targetCenterY, transform.position.z);
 
                     // Set the token at the new position on the board
-                    //sc.SetPosition(gameObject);
+                    sc.SetPosition(gameObject,xBoard,yBoard);
+                    sc.CheckForPointsAndWin(player, xBoard, yBoard);
 
+                    sc.SwitchPlayer();
                 }
                 else
                 {
@@ -130,6 +153,13 @@ public class TokenScript : MonoBehaviour
             }
         }
     }
+
+     
+    bool IsOrthogonalMove(int targetX, int targetY)
+    {
+        return (Mathf.Abs(targetX - xBoard) == 1 && targetY == yBoard) || (Mathf.Abs(targetY - yBoard) == 1 && targetX == xBoard);
+    }
+
     void SnapToCenter(int targetX, int targetY)
     {
         float xPos = targetX * 1f;
