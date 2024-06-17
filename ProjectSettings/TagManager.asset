@@ -8,6 +8,10 @@ TagManager:
   - Player1token
   - Grid tile
   - MovePlate
+  - Tokens
+  - NeutralToken
+  - RedGate
+  - BlueGate
   layers:
   - Default
   - TransparentFX

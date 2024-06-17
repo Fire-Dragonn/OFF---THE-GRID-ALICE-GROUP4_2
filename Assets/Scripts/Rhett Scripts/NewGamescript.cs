@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class NewGamescript : MonoBehaviour
 {
+    public static NewGamescript Instance { get; private set; }
+
     public GameObject redTokenPrefab;
     public GameObject blueTokenPrefab;
 
@@ -35,7 +37,41 @@ public class NewGamescript : MonoBehaviour
     private string currentplayer = "Red";
 
     public bool gameOver = false;
-    
+
+
+    void Awake()
+    {
+        // Ensure only one instance exists
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Debug.LogWarning("Trying to instantiate multiple instances of NewGamescript. This is not allowed.");
+            Destroy(gameObject); // Destroy the duplicate instance
+        }
+    }
+
+    public void IncrementPlayer1Score()
+    {
+        redScore++;
+        UpdateScoreText();
+        CheckWinCondition();
+    }
+
+    public void IncrementPlayer2Score()
+    {
+        blueScore++;
+        UpdateScoreText();
+        CheckWinCondition();
+    }
+
+    public void DestroyToken(GameObject token)
+    {
+        Destroy(token);
+    }
+
     void Start()
     {
         playerTurnManager = GetComponent<Playerturn>();
@@ -92,16 +128,14 @@ public class NewGamescript : MonoBehaviour
 
     public void SetPosition(GameObject obj, int x, int y)
     {
-        if (positiononboard(x, y))
-        {
-            int arrayX = TransformCoordinate(x);
-            int arrayY = TransformCoordinate(y);
-            positions[arrayX, arrayY] = obj;
-        }
-        else
-        {
-            Debug.LogError($"Attempted to set a token at invalid position ({x}, {y})");
-        }
+        TokenScript tokenScript = obj.GetComponent<TokenScript>();
+        tokenScript.SetxBoard(x);
+        tokenScript.SetyBoard(y);
+
+       // positions[x, y] = obj;
+
+        // Update token's position in the world
+        obj.transform.position = new Vector3(x, y, 0);
     }
    
     public void setpositionempty(int x, int y)
@@ -166,11 +200,11 @@ public class NewGamescript : MonoBehaviour
     public void CheckForPointsAndWin(string player, int x, int y)
     {
         // Assuming the gates are at (5,5) and (-5,-5)
-        bool reachedGate = (player == "Red" && x == 5 && y == 5) || (player == "Blue" && x == -5 && y == -5);
+        bool reachedGate = (player == "Red" && x == -5.37 && y == 4.72) || (player == "Blue" && x == 4.54 && y == -5.32);
 
         if (reachedGate)
         {
-            if (player == "Red" && y == 5)
+            if (player == "Red" && y == -10.03)
             {
                 redScore++;
                 if (redScore == 5)
@@ -178,7 +212,7 @@ public class NewGamescript : MonoBehaviour
                     DisplayWinPanel(player);
                 }
             }
-            else if (player == "Blue" && y == -5)
+            else if (player == "Blue" && y == 0)
             {
                 blueScore++;
                 if (blueScore == 5)
@@ -196,7 +230,20 @@ public class NewGamescript : MonoBehaviour
         blueScoreText.text = $"Blue Score: {blueScore}";
     }
 
-    private void DisplayWinPanel(string winner)
+    void CheckWinCondition()
+    {
+        // Implement your win condition logic here
+        if (redScore >= 5)
+        {
+            DisplayWinPanel("Red");
+        }
+        else if (blueScore >= 5)
+        {
+            DisplayWinPanel("Blue");
+        }
+    }
+
+    public void DisplayWinPanel(string winner)
     {
         gameOver = true;
         winPanel.SetActive(true);

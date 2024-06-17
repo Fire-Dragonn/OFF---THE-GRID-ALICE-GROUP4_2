@@ -55,10 +55,7 @@ public class TokenScript : MonoBehaviour
             case "Player2token": this.GetComponent<SpriteRenderer>().sprite = BlueToken; player = "Blue"; break;
 
             case "NeutralToken": this.GetComponent<SpriteRenderer>().sprite = NeutralToken; break;
-        }
-
-
-        
+        }   
     }
 
     public void SetCoords()
@@ -69,7 +66,7 @@ public class TokenScript : MonoBehaviour
         float xPos = xBoard * 1f;//0.66f + -2.3f;
         float yPos = yBoard * 1f;//0.66f + -2.3f;
 
-        this.transform.position = new Vector3(xPos, yPos, transform.position.z);
+        transform.position = new Vector3(xPos, yPos, transform.position.z);
     }
     public string GetPlayer() { return player; }
 
@@ -87,12 +84,35 @@ public class TokenScript : MonoBehaviour
     {
         yBoard = y;
     }
-    void OnMouseDown()
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("BlueGate") && player == "Red") // Player 1 token reaches Blue gate
+        {
+            NewGamescript gameController = controller.GetComponent<NewGamescript>();
+            if (gameController != null)
+            {
+                gameController.IncrementPlayer1Score();
+                gameController.DestroyToken(gameObject); // Destroy the token
+            }
+        }
+        else if (collision.CompareTag("RedGate") && player == "Blue") // Player 2 token reaches Red gate
+        {
+            NewGamescript gameController = controller.GetComponent<NewGamescript>();
+            if (gameController != null)
+            {
+                gameController.IncrementPlayer2Score();
+                gameController.DestroyToken(gameObject); // Destroy the token
+            }
+        }
+    }
+
+    public void OnMouseDown()
     {
         NewGamescript sc = controller.GetComponent<NewGamescript>();
-        Playerturn turnManager = controller.GetComponent<Playerturn>();
+        //Playerturn turnManager = controller.GetComponent<Playerturn>();
 
-        if (playerTurnManager != null && playerTurnManager.GetCurrentPlayer() == player && !controller.GetComponent<NewGamescript>().IsGameOver())
+        if (playerTurnManager != null && playerTurnManager.GetCurrentPlayer() == player && !sc.IsGameOver())
         {
             screenPoint = Camera.main.WorldToScreenPoint(gameObject.transform.position);
             offset = gameObject.transform.position - Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, screenPoint.z));
@@ -109,6 +129,7 @@ public class TokenScript : MonoBehaviour
             transform.position = cursorPosition;
         }
     }
+
 
 
     private void OnMouseUp()

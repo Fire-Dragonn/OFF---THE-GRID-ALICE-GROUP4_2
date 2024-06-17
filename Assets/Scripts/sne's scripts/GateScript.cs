@@ -4,16 +4,30 @@ using UnityEngine;
 
 public class GateScript : MonoBehaviour
 {
-    public string gateOwner; // "Red" or "Blue"
-
-    void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        TokenScript token = other.GetComponent<TokenScript>();
-        if (token != null && token.tag == gateOwner + "token")
+        GameObject token = collision.gameObject;
+
+        // Check if the entering token is a player token or neutral token
+        if (token.CompareTag("Player1token") || token.CompareTag("Player2token") || token.CompareTag("NeutralToken"))
         {
-            NewGamescript gameScript = GameObject.FindGameObjectWithTag("GameController").GetComponent<NewGamescript>();
-            gameScript.CheckForPointsAndWin(token.GetPlayer(), token.GetxBoard(), token.GetyBoard());
-            Destroy(other.gameObject);
+            TokenScript tokenScript = token.GetComponent<TokenScript>();
+            if (tokenScript != null)
+            {
+                string player = tokenScript.GetPlayer();
+
+                // Determine win/lose conditions based on player and gate position
+                if (player == "Red" && gameObject.name == "RedGate")
+                {
+                    // Red player wins
+                    NewGamescript.Instance.DisplayWinPanel("Red");
+                }
+                else if (player == "Blue" && gameObject.name == "BlueGate")
+                {
+                    // Blue player wins
+                    NewGamescript.Instance.DisplayWinPanel("Blue");
+                }
+            }
         }
     }
 }
